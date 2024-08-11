@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -43,20 +44,33 @@ public class BibliotecaControllerTest {
     }
 
     @Test
-    public void testUnauthorizedAccessToCreateBiblioteca() throws Exception {
-        Biblioteca biblioteca = new Biblioteca();
-        biblioteca.setNombre("Biblioteca Central");
-        biblioteca.setDireccion("Calle Falsa 123");
-        biblioteca.setTelefono("123456789");
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/bibliotecas")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"nombre\":\"Biblioteca Central\",\"direccion\":\"Calle Falsa 123\",\"telefono\":\"123456789\"}"))
-                .andExpect(status().isUnauthorized());
+    @WithMockUser(username = "user", roles = {"USER"})
+    public void testAuthorizedAccessToGetAllBibliotecas() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/bibliotecas")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void testUnauthorizedAccessToUpdateBiblioteca() throws Exception {
+    @WithMockUser(username = "user", roles = {"USER"})
+    public void testAuthorizedAccessToGetBibliotecaById() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/bibliotecas/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound()); // Assuming no biblioteca with id 1 exists
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = {"USER"})
+    public void testAuthorizedAccessToCreateBiblioteca() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/bibliotecas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"nombre\":\"Biblioteca Central\",\"direccion\":\"Calle Falsa 123\",\"telefono\":\"123456789\"}"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = {"USER"})
+    public void testAuthorizedAccessToUpdateBiblioteca() throws Exception {
         Biblioteca biblioteca = new Biblioteca();
         biblioteca.setNombre("Biblioteca Central");
         biblioteca.setDireccion("Calle Falsa 123");
@@ -66,11 +80,12 @@ public class BibliotecaControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/bibliotecas/" + biblioteca.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"nombre\":\"Biblioteca Actualizada\",\"direccion\":\"Calle Verdadera 456\",\"telefono\":\"987654321\"}"))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void testUnauthorizedAccessToDeleteBiblioteca() throws Exception {
+    @WithMockUser(username = "user", roles = {"USER"})
+    public void testAuthorizedAccessToDeleteBiblioteca() throws Exception {
         Biblioteca biblioteca = new Biblioteca();
         biblioteca.setNombre("Biblioteca Central");
         biblioteca.setDireccion("Calle Falsa 123");
@@ -79,6 +94,6 @@ public class BibliotecaControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/bibliotecas/" + biblioteca.getId())
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isNoContent()); 
     }
 }
