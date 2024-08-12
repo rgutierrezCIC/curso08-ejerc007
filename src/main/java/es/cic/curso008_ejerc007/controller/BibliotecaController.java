@@ -4,6 +4,7 @@ import es.cic.curso008_ejerc007.model.Biblioteca;
 import es.cic.curso008_ejerc007.repository.BibliotecaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,22 +18,26 @@ public class BibliotecaController {
     private BibliotecaRepository bibliotecaRepository;
 
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     public List<Biblioteca> getAllBibliotecas() {
         return bibliotecaRepository.findAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Biblioteca> getBibliotecaById(@PathVariable Long id) {
         Optional<Biblioteca> biblioteca = bibliotecaRepository.findById(id);
         return biblioteca.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public Biblioteca createBiblioteca(@RequestBody Biblioteca biblioteca) {
         return bibliotecaRepository.save(biblioteca);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Biblioteca> updateBiblioteca(@PathVariable Long id, @RequestBody Biblioteca bibliotecaDetails) {
         Optional<Biblioteca> biblioteca = bibliotecaRepository.findById(id);
         if (biblioteca.isPresent()) {
@@ -47,6 +52,7 @@ public class BibliotecaController {
     }
 
     @PutMapping("/{id}/nombre")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Biblioteca> updateBibliotecaNombre(@PathVariable Long id, @RequestBody String nombre) {
         Optional<Biblioteca> biblioteca = bibliotecaRepository.findById(id);
         if (biblioteca.isPresent()) {
@@ -59,6 +65,7 @@ public class BibliotecaController {
     }
 
     @PutMapping("/{id}/direccion")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Biblioteca> updateBibliotecaDireccion(@PathVariable Long id, @RequestBody String direccion) {
         Optional<Biblioteca> biblioteca = bibliotecaRepository.findById(id);
         if (biblioteca.isPresent()) {
@@ -71,6 +78,7 @@ public class BibliotecaController {
     }
 
     @PutMapping("/{id}/telefono")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Biblioteca> updateBibliotecaTelefono(@PathVariable Long id, @RequestBody String telefono) {
         Optional<Biblioteca> biblioteca = bibliotecaRepository.findById(id);
         if (biblioteca.isPresent()) {
@@ -83,6 +91,7 @@ public class BibliotecaController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> deleteBiblioteca(@PathVariable Long id) {
         Optional<Biblioteca> biblioteca = bibliotecaRepository.findById(id);
         if (biblioteca.isPresent()) {
