@@ -46,6 +46,42 @@ public class BibliotecaController {
         }
     }
 
+    @PutMapping("/{id}/nombre")
+    public ResponseEntity<Biblioteca> updateBibliotecaNombre(@PathVariable Long id, @RequestBody String nombre) {
+        Optional<Biblioteca> biblioteca = bibliotecaRepository.findById(id);
+        if (biblioteca.isPresent()) {
+            Biblioteca updatedBiblioteca = biblioteca.get();
+            updatedBiblioteca.setNombre(nombre);
+            return ResponseEntity.ok(bibliotecaRepository.save(updatedBiblioteca));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}/direccion")
+    public ResponseEntity<Biblioteca> updateBibliotecaDireccion(@PathVariable Long id, @RequestBody String direccion) {
+        Optional<Biblioteca> biblioteca = bibliotecaRepository.findById(id);
+        if (biblioteca.isPresent()) {
+            Biblioteca updatedBiblioteca = biblioteca.get();
+            updatedBiblioteca.setDireccion(direccion);
+            return ResponseEntity.ok(bibliotecaRepository.save(updatedBiblioteca));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}/telefono")
+    public ResponseEntity<Biblioteca> updateBibliotecaTelefono(@PathVariable Long id, @RequestBody String telefono) {
+        Optional<Biblioteca> biblioteca = bibliotecaRepository.findById(id);
+        if (biblioteca.isPresent()) {
+            Biblioteca updatedBiblioteca = biblioteca.get();
+            updatedBiblioteca.setTelefono(telefono);
+            return ResponseEntity.ok(bibliotecaRepository.save(updatedBiblioteca));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBiblioteca(@PathVariable Long id) {
         Optional<Biblioteca> biblioteca = bibliotecaRepository.findById(id);
